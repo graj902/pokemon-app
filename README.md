@@ -1,70 +1,100 @@
-# Getting Started with Create React App
+# Pokémon Gallery (React + Redux Toolkit + Ant Design)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A simple Pokémon browser application built with React. This project uses the PokeAPI for data, Redux Toolkit for state management, Axios for data fetching, and Ant Design for the UI component library.
 
-## Available Scripts
+The final application is designed to be containerized with Docker and served in production by an Nginx web server.
 
-In the project directory, you can run:
+![Demo Screenshot](https-placeholder-for-your-image-url) <!-- Optional: Add a screenshot of your app later! -->
 
-### `npm start`
+---
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Table of Contents
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+1.  [Technology Stack](#technology-stack)
+2.  [Project Setup & Development](#project-setup--development)
+3.  [Building and Running for Production](#building-and-running-for-production)
+4.  [Appendix: Full Server Setup](#appendix-full-server-setup)
 
-### `npm test`
+---
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Technology Stack
 
-### `npm run build`
+*   **Frontend:** React (Create React App)
+*   **State Management:** Redux Toolkit
+*   **Data Fetching:** Axios
+*   **UI Library:** Ant Design
+*   **Package Manager:** Yarn
+*   **Containerization:** Docker
+*   **Production Web Server:** Nginx
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+---
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Project Setup & Development
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+These steps assume you have a server environment with Node.js v20, Yarn, and Docker installed. (See [Appendix](#appendix-full-server-setup) for first-time server setup).
 
-### `npm run eject`
+### 1. Clone the Repository & Install Dependencies
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+```bash
+# Clone this repository to your machine
+git clone <your-github-repo-url>
+cd pokemon-app
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+# Install all project dependencies
+yarn install
+2. Run the Development Server
+This command starts the local development server.
+code
+Bash
+# The HOST=0.0.0.0 flag is required to access the server from a public IP
+HOST=0.0.0.0 PORT=3000 yarn start
+The application will be accessible at http://<your-server-ip>:3000.
+Note: Ensure your server's firewall (e.g., AWS Security Group) has an inbound rule allowing TCP traffic on port 3000.
+Building and Running for Production
+The application is containerized for a consistent and reliable production deployment.
+1. Build the Docker Image
+From the project's root directory (pokemon-app), run the following command:
+code
+Bash
+# This builds the image using the instructions in the Dockerfile
+docker build -t pokemon-app:latest .
+2. Run the Docker Container
+This command will start the container and make the application accessible on port 80.
+code
+Bash
+# Run the container in detached mode (-d) and map host port 80 to the container's port 80 (-p 80:80)
+docker run -d -p 80:80 --name pokemon-app pokemon-app:latest
+The application will be accessible at http://<your-server-ip>.
+Note: Ensure your server's firewall (e.g., AWS Security Group) has an inbound rule allowing TCP traffic on port 80.
+Appendix: Full Server Setup
+These are the one-time steps to prepare a fresh Ubuntu 24.04 server (e.g., AWS EC2) from scratch.
+Step A: Update & Install Essentials
+code
+Bash
+sudo apt update -y
+sudo apt upgrade -y
+sudo apt install -y git curl build-essential wget unzip
+Step B: Install Node.js v20 & Yarn
+code
+Bash
+# Add NodeSource repository for Node.js v20
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt install -y nodejs
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+# Install Yarn using npm
+sudo npm install -g yarn
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+# Verify installations
+node -v  # Should be v20.x.x
+yarn -v
+Step C: Install Docker Engine & Docker Compose
+code
+Bash
+# Follow the official Docker installation guide for the latest and most secure method.
+# A quick setup for Ubuntu is provided below:
+sudo apt install -y docker.io docker-compose-plugin
+sudo systemctl enable --now docker
 
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+# Add your user to the docker group to run commands without sudo
+sudo usermod -aG docker $USER
+newgrp docker # This applies the new group membership to your current shell
